@@ -5,6 +5,7 @@ local CoreGui = cloneref(game:GetService("CoreGui")) --plr.PlayerGui
 local library
 local templateFolder
 local canvas
+
 function NotificationLibrary:Load()
     library = game:GetObjects("rbxassetid://15133757123")[1]
     templateFolder = library.Templates
@@ -12,6 +13,7 @@ function NotificationLibrary:Load()
     library.Name = LibraryName
     library.Parent = CoreGui
 end
+
 function NotificationLibrary:SendNotification(Mode, Text, Duration)
     local libaryCore = CoreGui:FindFirstChild(LibraryName)
     if not CoreGui:FindFirstChild(LibraryName) then
@@ -21,6 +23,13 @@ function NotificationLibrary:SendNotification(Mode, Text, Duration)
         templateFolder = library.Templates
         canvas = library.list
     end
+
+    -- Remove layout if any to avoid constraints (optional, depending on your design)
+    local layout = canvas:FindFirstChildWhichIsA("UIListLayout") or canvas:FindFirstChildWhichIsA("UIGridLayout")
+    if layout then
+        layout:Destroy()
+    end
+
     if templateFolder:FindFirstChild(Mode) then
         task.spawn(function()
             local success, err = pcall(function()
@@ -34,27 +43,27 @@ function NotificationLibrary:SendNotification(Mode, Text, Duration)
 
                 -- Set anchor point to bottom right (1, 1)
                 Notification.AnchorPoint = Vector2.new(1, 1)
-                -- Set position to bottom right, adjust the second value (Y) to move it above the bottom screen margin
-                Notification.Position = UDim2.new(1, 0, 1, -10)
+                -- Set position to bottom right, adjust the Y value for vertical offset
+                Notification.Position = UDim2.new(1, -10, 1, -10)  -- X: -10 for right margin, Y: -10 for bottom margin
 
-                Notification.Size = UDim2.new(0, 0,0.087, 0)
-                filler.Size = UDim2.new(1, 0,1, 0)
+                Notification.Size = UDim2.new(0, 0, 0.087, 0)
+                filler.Size = UDim2.new(1, 0, 1, 0)
 
                 local T1 = TweenInfo.new(0.2, Enum.EasingStyle.Quad, Enum.EasingDirection.Out)
                 local T2 = TweenInfo.new(Duration, Enum.EasingStyle.Linear, Enum.EasingDirection.Out)
                 local T3 = TweenInfo.new(0.3, Enum.EasingStyle.Quad, Enum.EasingDirection.Out)
 
-                TweenService:Create(Notification, T1, {Size = UDim2.new(1, 0,0.087, 0)}):Play()
+                TweenService:Create(Notification, T1, {Size = UDim2.new(1, 0, 0.087, 0)}):Play()
                 task.wait(0.2)
-                TweenService:Create(filler, T3, {Size = UDim2.new(0.011, 0,1, 0)}):Play()
+                TweenService:Create(filler, T3, {Size = UDim2.new(0.011, 0, 1, 0)}):Play()
 
-                TweenService:Create(bar, T2, {Size = UDim2.new(1, 0,0.05, 0)}):Play()
+                TweenService:Create(bar, T2, {Size = UDim2.new(1, 0, 0.05, 0)}):Play()
 
                 task.wait(Duration)
 
-                TweenService:Create(filler, T1, {Size = UDim2.new(1, 0,1, 0)}):Play()
+                TweenService:Create(filler, T1, {Size = UDim2.new(1, 0, 1, 0)}):Play()
                 task.wait(0.25)
-                TweenService:Create(Notification, T3, {Size = UDim2.new(0, 0,0.087, 0)}):Play()
+                TweenService:Create(Notification, T3, {Size = UDim2.new(0, 0, 0.087, 0)}):Play()
                 task.wait(0.25)
                 Notification:Destroy()
             end)
@@ -67,5 +76,6 @@ function NotificationLibrary:SendNotification(Mode, Text, Duration)
         warn("Invalid theme applied")
     end
 end
+
 
 return NotificationLibrary
