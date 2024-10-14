@@ -24,12 +24,6 @@ function NotificationLibrary:SendNotification(Mode, Text, Duration)
         canvas = library.list
     end
 
-    -- Remove layout if any to avoid constraints (optional, depending on your design)
-    local layout = canvas:FindFirstChildWhichIsA("UIListLayout") or canvas:FindFirstChildWhichIsA("UIGridLayout")
-    if layout then
-        layout:Destroy()
-    end
-
     if templateFolder:FindFirstChild(Mode) then
         task.spawn(function()
             local success, err = pcall(function()
