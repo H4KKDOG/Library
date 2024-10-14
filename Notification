@@ -1,10 +1,13 @@
-local LibraryName = "Notification Library" -- yes
+local LibraryName = "Notification Library"
 local NotificationLibrary = {}
 local TweenService = game:GetService("TweenService")
 local CoreGui = cloneref(game:GetService("CoreGui")) --plr.PlayerGui
 local library
 local templateFolder
 local canvas
+
+-- Store active notifications to calculate offset
+local activeNotifications = {}
 
 function NotificationLibrary:Load()
     library = game:GetObjects("rbxassetid://15133757123")[1]
@@ -24,6 +27,12 @@ function NotificationLibrary:SendNotification(Mode, Text, Duration)
         canvas = library.list
     end
 
+    -- Remove layout if any to avoid constraints (optional, depending on your design)
+    local layout = canvas:FindFirstChildWhichIsA("UIListLayout") or canvas:FindFirstChildWhichIsA("UIGridLayout")
+    if layout then
+        layout:Destroy()
+    end
+
     if templateFolder:FindFirstChild(Mode) then
         task.spawn(function()
             local success, err = pcall(function()
@@ -37,8 +46,13 @@ function NotificationLibrary:SendNotification(Mode, Text, Duration)
 
                 -- Set anchor point to bottom right (1, 1)
                 Notification.AnchorPoint = Vector2.new(1, 1)
-                -- Set position to bottom right, adjust the Y value for vertical offset
-                Notification.Position = UDim2.new(1, -10, 1, -10)  -- X: -10 for right margin, Y: -10 for bottom margin
+
+                -- Calculate Y offset based on the number of active notifications
+                local offset = (#activeNotifications * 100) -- Each notification is offset by 100 pixels
+                Notification.Position = UDim2.new(1, -10, 1, -10 - offset) -- Move each new notification above the previous one
+
+                -- Add the new notification to the list of active notifications
+                table.insert(activeNotifications, Notification)
 
                 Notification.Size = UDim2.new(0, 0, 0.087, 0)
                 filler.Size = UDim2.new(1, 0, 1, 0)
@@ -59,7 +73,21 @@ function NotificationLibrary:SendNotification(Mode, Text, Duration)
                 task.wait(0.25)
                 TweenService:Create(Notification, T3, {Size = UDim2.new(0, 0, 0.087, 0)}):Play()
                 task.wait(0.25)
+
+                -- Remove the notification from the active list and adjust remaining notifications
                 Notification:Destroy()
+                for i, notif in ipairs(activeNotifications) do
+                    if notif == Notification then
+                        table.remove(activeNotifications, i)
+                        break
+                    end
+                end
+
+                -- Shift up the notifications to fill the gap
+                for i, notif in ipairs(activeNotifications) do
+                    local newOffset = (i - 1) * 100
+                    notif.Position = UDim2.new(1, -10, 1, -10 - newOffset)
+                end
             end)
             if not success then
                 warn("There was an error while trying to create a notification!")
@@ -70,6 +98,5 @@ function NotificationLibrary:SendNotification(Mode, Text, Duration)
         warn("Invalid theme applied")
     end
 end
-
 
 return NotificationLibrary
