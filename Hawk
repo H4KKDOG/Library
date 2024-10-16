@@ -396,6 +396,7 @@ function HawkLib:Window(Win)
 		Main.BorderSizePixel = 0
 		Main.Position = UDim2.new(0.5, -296, 0.5, -164)
 		Main.Size = UDim2.new(0, 592, 0, 328)
+		Main.Visible = true
 
 		if OnPc or OnTabletLaptop then
 			Main.Position = HawkLib.Elements.WideMenu.MainPosition
@@ -545,11 +546,9 @@ function HawkLib:Window(Win)
 		Shadow.SliceCenter = Rect.new(24, 24, 276, 276)
 
 		function HawkLib:ToggleUI()	
-			if OpenFrame.Visible == false then
-				OpenFrame.Visible = true
+			if Main.Visible == true then
 				Main.Visible = false
 			else
-				OpenFrame.Visible = false
 				Main.Visible = true
 			end
 		end
@@ -565,12 +564,10 @@ function HawkLib:Window(Win)
 		local Sayfalar = {}	
 
 		function Sayfalar:ToggleUI()		
-			if OpenFrame.Visible == false then
-				OpenFrame.Visible = true
-				Main.Visible = false
+			if  == true then
+				 = false
 			else
-				OpenFrame.Visible = false
-				Main.Visible = true
+				 = true
 			end
 		end
 
