@@ -546,7 +546,7 @@ function HawkLib:Window(Win)
 		Shadow.SliceCenter = Rect.new(24, 24, 276, 276)
 
 		function HawkLib:ToggleUI()	
-			if Main.Visible == true then
+			if Main.Visible then
 				Main.Visible = false
 			else
 				Main.Visible = true
@@ -564,10 +564,10 @@ function HawkLib:Window(Win)
 		local Sayfalar = {}	
 
 		function Sayfalar:ToggleUI()		
-			if  == true then
-				 = false
+			if Main.Visible then
+				Main.Visible = false
 			else
-				 = true
+				Main.Visible = true
 			end
 		end
 
